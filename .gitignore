@@ -1,1 +1,12 @@
 target/
+
+# local working files, not part of the plugin repository
+error.txt
+test.txt
+config.yml.backup
+config.yml
+config-new-rolls.yml
+config-tutorial.yml
+possible_rolls.txt
+BACKLOG.md
+CLAUDE.md

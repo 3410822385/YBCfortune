@@ -1,42 +1,104 @@
-adverts:
-  - "secret erp channel"
-  - "chatroom where you say ogey rrat"
-  - "ONGOING RAID (jk)"
-  - "be nice!"
-  - "gura in the dark room"
-  - "HoloEN3 future year" # Will be replaced with current year dynamically
-  - "kiara fan club"
-  - "server chat yah!"
-  - "fumo posting area ᗜˬᗜ"
-  - "ඞ"
-  - "0 days since last yab"
-  - "\"\"\"appeal\"\"\" your ban ;) ;) "
-  - "PIPPA NOTICE ME"
-  - "yeah, me"
-  - "virtual youtuber enthusiasts group"
-  - "おはよううううううううう！！！"
-  - "SEXXXXX"
-  - "do your reps!"
-  - "rigger Hate!"
-  - "cum"
-  - "Don't let this ERP distract you from the fact that Pekora bought a fucking MONKEEEE"
-  - "I LOVE WHOOOOOOOOOOOOOOOOOOOOOOOOOORES"
-  - "YOU WILL NOT PIRATE JAVS"
-  - "reminder to hide your discord overlay!"
+# ==========================================================================
+# s4sfortune config
+#
+# adverts: strings broadcast to everyone once an hour with a ⭐ prefix.
+#   The literal text "future year" is replaced with the current year.
+#   Empty list = no broadcasts.
+#
+# regularFortunes / specialFortunes: what /roll can land on. A roll is a
+# special one 1 time in 20 (falls back to regular when no specials exist).
+# Edit + /fortunereload — no restart or recompile needed.
+#
+# Fortune schema:
+#   color: "#rrggbb"      chat color of the announcement
+#   text: "..."           the fortune text (legacy § codes allowed)
+#   weight: <n>           relative chance within its pool; default 10 when
+#                         omitted (weight 5 = half as likely as a default roll)
+#   commands: [ ... ]     console commands; %player% = the roller's name
+#   actions: [ ... ]      built-in primitives for things commands can't do:
+#     "fire <ticks>"                  set the roller on fire
+#     "sethealth <halfhearts>"        set absolute health (2 = one heart)
+#     "sethunger <0-20>"              set absolute food level
+#     "setair <ticks>"                set remaining air (drowning gasp)
+#     "tempban <minMin> <maxMin>"     timed ban, random minutes in range
+#     "lightning-effect"              visual-only lightning strike
+#     "velocity <x> <y> <z>"          launch the roller
+#     "chat-as <message>"             the roller says it in chat
+#     "delay <ticks>"                 wait before the remaining actions
+#     "run <command>"                 console command as an action (delayable)
+#     "drop-inventory"                spill the whole inventory on the ground
+#     "drop-held-item"                drop the main-hand item
+#     "shuffle-inventory"             scramble the 36 storage slots
+#     "swap-random-player"            swap places with a random online player
+#     "steal-random-item"             stash a random inventory stack (needs the
+#                                     stash: section enabled — see below)
+#     "freeze <ticks>"                powder-snow freeze (140 = fully frozen)
+#     "setfall <distance>"            fall damage on next landing
+#     "spin"                          randomly spin the roller's camera
+#     "sound <key> [vol] [pitch]"     every player hears it at their position
+#     "broadcast <message>"           MiniMessage broadcast to everyone
+#     "drop-item <MATERIAL> [count]"  drop items on the ground; map form for
+#                                     custom name/lore (MiniMessage):
+#       - drop-item: {material: CAKE, count: 1, name: "<gold>Cake", lore: ["<gray>..."]}
+#   random:               weighted branches, ONE picked per roll; each branch
+#                         takes weight + the same commands/actions/random keys
+# Execution order: commands, then actions, then random.
+# ==========================================================================
 
-# Regular fortunes with only text and color (no side effects)
-regularFortunes:
-  - color: "#f51c6a"
-    text: "Reply hazy, try again"
-  - color: "#e7890c"
-    text: "Good Luck"
-  - color: "#bac200"
-    text: "Average Luck"
-  - color: "#43fd3b"
-    text: "Good news will come to you by mail"
-  - color: "#00cbb0"
-    text: "ｷﾀ━━━━━━(ﾟ∀ﾟ)━━━━━━ !!!!"
-  - color: "#2a56fb"
-    text: "Better not tell you now"
-  - color: "#6023f8"
-    text: "Outlook good"
+# Optional "OP RAN WITH THE MONEY" stash for the steal-random-item action.
+# When enabled: stolen stacks are stored in plugins/s4sfortune/stash.yml
+# (human-readable, with a paste-ready give-command per entry for manual
+# restoration), a chest is kept at the coordinates and right-clicking it
+# returns the clicking player's stolen items. Disabled = nothing loads and
+# stash.yml is never touched.
+#stash:
+#  enabled: true
+#  world: world
+#  x: 0
+#  y: 64
+#  z: 0
+
+adverts: []
+#adverts:
+#  - "be nice!"
+#  - "server chat yah!"
+
+regularFortunes: []
+## Text-only fortune:
+#regularFortunes:
+#  - color: "#e7890c"
+#    text: "Good Luck"
+## Fortune with command side effects:
+#  - color: "#7fec11"
+#    text: "Bad Luck"
+#    commands:
+#      - 'effect give %player% minecraft:unluck 120 0'
+## Fortune with a weighted sub-roll (one branch picked per roll):
+#  - color: "#a205df"
+#    text: "Very Bad Luck"
+#    random:
+#      - weight: 1
+#        commands:
+#          - 'effect give %player% minecraft:poison 25 0'
+#      - weight: 5
+#        actions:
+#          - 'fire 200'
+
+specialFortunes: []
+## Special with built-in actions and a delayed punchline:
+#specialFortunes:
+#  - color: "#f7dc6f"
+#    text: "Your Shitty Luck Has Angered ZEUSCHAMA"
+#    actions:
+#      - 'lightning-effect'
+#      - 'delay 40'
+#      - 'broadcast <yellow>%player% smells of ozone.'
+## Special dropping a custom-named item:
+#  - color: "#b48905"
+#    text: "Berries :D"
+#    actions:
+#      - drop-item:
+#          material: SWEET_BERRIES
+#          count: 64
+#          name: "<red>Berry"
+#          lore: ["<gray>Its a berry"]

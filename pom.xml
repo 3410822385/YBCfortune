@@ -9,29 +9,54 @@
   <version>1.0-SNAPSHOT</version>
 
   <name>s4sfortune</name>
-  <!-- FIXME change it to the project's website -->
-  <url>http://www.example.com</url>
 
   <repositories>
-    <!-- This adds the Spigot Maven repository to the build -->
+    <!-- PaperMC repository for the Paper API -->
     <repository>
-        <id>spigot-repo</id>
-        <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+        <id>papermc</id>
+        <url>https://repo.papermc.io/repository/maven-public/</url>
     </repository>
   </repositories>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
+    <!-- Default build: 26.2-only jar. Paper 26.2 requires Java 25. -->
+    <maven.compiler.release>25</maven.compiler.release>
+    <paper.api.version>[26.2.build,)</paper.api.version>
+    <plugin.apiVersion>26.2</plugin.apiVersion>
+    <jar.finalName>${project.name}</jar.finalName>
   </properties>
 
+  <profiles>
+    <!-- mvn package -Pmc121 -> s4sfortune-1.21.jar: compiled against the
+         1.21.11 API with Java 21 class files and api-version 1.21, so the
+         one jar runs on BOTH Paper 1.21.11 and Paper 26.2. Source must stick
+         to APIs that exist in 1.21.11 for this profile to keep compiling. -->
+    <profile>
+      <id>mc121</id>
+      <properties>
+        <maven.compiler.release>21</maven.compiler.release>
+        <paper.api.version>1.21.11-R0.1-SNAPSHOT</paper.api.version>
+        <plugin.apiVersion>1.21</plugin.apiVersion>
+        <jar.finalName>${project.name}-1.21</jar.finalName>
+      </properties>
+      <build>
+        <!-- Own build dir: without this, "mvn package -Pmc121" after a default
+             build silently repacks the already-compiled Java 25 classes and
+             the "dual" jar crashes Java 21 servers with
+             UnsupportedClassVersionError. Never share target/ between the
+             two profiles. -->
+        <directory>${project.basedir}/target/mc121</directory>
+      </build>
+    </profile>
+  </profiles>
+
   <dependencies>
-    <!--This adds the Spigot API artifact to the build -->
+    <!-- Paper API (includes Adventure) -->
     <dependency>
-           <groupId>org.spigotmc</groupId>
-           <artifactId>spigot-api</artifactId>
-           <version>1.16.5-R0.1-SNAPSHOT</version>
+           <groupId>io.papermc.paper</groupId>
+           <artifactId>paper-api</artifactId>
+           <version>${paper.api.version}</version>
            <scope>provided</scope>
     </dependency>
   </dependencies>
@@ -49,29 +74,27 @@
 	  </resources>
     <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
       <plugins>
-        <!-- clean lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#clean_Lifecycle -->
         <plugin>
           <artifactId>maven-clean-plugin</artifactId>
           <version>3.1.0</version>
         </plugin>
-        <!-- default lifecycle, jar packaging: see https://maven.apache.org/ref/current/maven-core/default-bindings.html#Plugin_bindings_for_jar_packaging -->
         <plugin>
           <artifactId>maven-resources-plugin</artifactId>
-          <version>3.0.2</version>
+          <version>3.3.1</version>
         </plugin>
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.8.0</version>
+          <version>3.13.0</version>
         </plugin>
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.22.1</version>
+          <version>3.2.5</version>
         </plugin>
         <plugin>
           <artifactId>maven-jar-plugin</artifactId>
-          <version>3.0.2</version>
+          <version>3.4.1</version>
           <configuration>
-				    <finalName>${project.name}</finalName>
+				    <finalName>${jar.finalName}</finalName>
 			    </configuration>
         </plugin>
         <plugin>
@@ -81,15 +104,6 @@
         <plugin>
           <artifactId>maven-deploy-plugin</artifactId>
           <version>2.8.2</version>
-        </plugin>
-        <!-- site lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#site_Lifecycle -->
-        <plugin>
-          <artifactId>maven-site-plugin</artifactId>
-          <version>3.7.1</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-project-info-reports-plugin</artifactId>
-          <version>3.0.0</version>
         </plugin>
       </plugins>
     </pluginManagement>
